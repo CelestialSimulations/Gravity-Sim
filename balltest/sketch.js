@@ -1,14 +1,16 @@
 var margin = 100;
-var ballHeight = margin;
+var ballHeight = 0;//margin;
 //meter is basically tick
 var meter = 20;
 // scales with gravity of planet - so if gravity of moon
 // is 4.5, then go ahead and change it's value to 4.5 
-var gravity = 30;
+var gravity = 10;
+
+//var bounce;
+var e = .75;
+
 var distancePerSec = 0;
 var dir = 1;
-//var bounce;
-var halver = .5;
 
 var lastTime = 0;
 
@@ -23,6 +25,8 @@ function setup() {
 
 function draw() {
   background(230);
+  
+  line(10,0,10,height);
   
   stroke(240, 0, 0);
   line(0, ballHeight, width, ballHeight);
@@ -40,6 +44,7 @@ function draw() {
     fill(0);
     noStroke();
     textAlign(LEFT, CENTER);
+    textSize(10);
     text(i/meter+" m", 25, height-i);
     
     if (ballHeight < i+5 && ballHeight > i-5 ) {
@@ -60,27 +65,27 @@ function draw() {
       distancePerSec = (meter*gravity)/100;
       
       //print(lastTime);
-      var totalHeight = (100) + ((gravity*meter)/2)*pow(lastTime/1000, 2);
+      //var totalHeight = (100) + ((gravity*meter)/2)*pow(lastTime/1000, 2);
         
     }
     
-    println(totalHeight);
+    //println(totalHeight);
     
-    ballHeight = totalHeight;
+    //ballHeight = totalHeight;
     
-    /*ballHeight = ballHeight + (distancePerSec * dir);
+    ballHeight = ballHeight + (distancePerSec * dir);
     var distanceTraveled = ballHeight-margin;
     var half;
     
-    var bounce = ((height-100)) - ((height-100) * halver);  
+    var bounce = ((height-10)) - ((height-10) * e);  
     if(ballHeight > height-10) {
       dir = dir *-1;
       fallstate = 1;
      
-      halver = halver*.5;
+      e = e*e;
       
       
-    }*/
+    }
     
     if(fallstate == 1) {
       //bounce = bounce/2;
@@ -91,7 +96,7 @@ function draw() {
         fallstate = 1;
       }
       
-      if(halver < .015){
+      if(e < .0005){
         ballHeight = height-10;
       }
       
