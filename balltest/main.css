@@ -1,0 +1,12 @@
+body {
+  padding: 0; 
+  margin: 0;
+  
+} 
+canvas {
+  vertical-align: top;
+}
+#sliderLoc {
+  height:95vh;
+  background-color: brown;
+}
