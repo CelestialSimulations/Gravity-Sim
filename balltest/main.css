@@ -1,12 +1,95 @@
+@font-face {
+    font-family: astral; /*a name to be used later*/
+    src: url(libraries/outerspace_militia/OuterspaceMilitia.ttf); /*URL to font*/
+}
+@font-face {
+    font-family: orbiter; /*a name to be used later*/
+    src: url(libraries/earth_orbiter/earthorbiter.ttf); /*URL to font*/
+}
+/*@media (min-width: 544px) { */
+/*  #domElementLoc {*/
+/*    height: 100px;*/
+/*  }*/
+/*}*/
+
+/*@media (min-width: 768px) {*/
+  
+/*}*/
+
+/*@media (min-width: 992px) {*/
+  
+/*}*/
+
+/*@media (min-width: 1200px) {*/
+  
+/*}*/
+
+/*@media media-breakpoint-up(sm) {
+  .some-class {
+    display: block;
+  }
+}*/
+
 body {
   padding: 0; 
   margin: 0;
   
 } 
+h2 {
+  font-family:astral;
+  background-color: darkblue;
+  color: white;
+}
 canvas {
   vertical-align: top;
+  border: ridge 10px gray;
 }
-#sliderLoc {
+#canvasLoc {
+  /*border: ridge 10px gray;*/
+}
+#domElementLoc {
+  background:
+radial-gradient(black 15%, transparent 16%) 0 0,
+radial-gradient(black 15%, transparent 16%) 8px 8px,
+radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+background-color:#282828;
+background-size:16px 16px;
+  padding: 10px;
+  /*float: left;*/
   /*height:95vh;*/
-  background-color: brown;
+  /*background-color: brown;*/
+  border: ridge 10px gray;
+  font-family: orbiter;
+  height: 700px;
 }
+#domElementLoc label {
+  color: white;
+}
+input {
+  margin-left:5px;
+}
+table, button, input {
+  width: 100%;
+}
+/*button {
+  width: 100%;
+}
+#pause_button, #drop_button {
+  padding:0px;
+}*/
+/*#domElementLoc button:first-child {
+  font-family: orbiter;
+  width: 80%;
+  float: left;
+  /*margin-right: 10px;*
+  /*text-align: center;
+  margin-left: auto;
+  margin-right: auto;*
+  /*display: block;*
+}
+#domElementLoc button:not(:first-child) {
+  font-family: orbiter;
+  width: 20%;
+  float: left;
+}*/

@@ -2,12 +2,15 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <title>balltest</title>
+    <title>Gravity Simulation</title>
     
     <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css' integrity='sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY' crossorigin='anonymous'>
+    <link href="libraries/tether/dist/css/tether.min.css" rel="stylesheet">
+    <link href="libraries/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="libraries/bootstrap/dist/css/glyphicons.css" rel="stylesheet">
     <link rel='stylesheet' href='main.css'>
     
     <script src="libraries/p5.js" type="text/javascript"></script>
@@ -28,13 +31,24 @@
       </div>
 
       <div class="row">
+        <div class="col-md-4 side">
+          <div id="domElementLoc">
+            
+            <table>
+              <tr>
+                <td id="drop_button"></td>
+                <td id="pause_button"></td>
+              </tr>
+              <tr>
+                <td id="sliderLoc"></td>
+              </tr>
+            </table>
+            
+          </div>
+        </div>
+        
         <div class="col-md-8">
           <div id="canvasLoc"></div>
-        </div>
-        <div class="col-md-4 side">
-          <div id="sliderLoc">
-            <label>Ticks</label>
-          </div>
         </div>
       </div>
       
