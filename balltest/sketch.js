@@ -10,12 +10,12 @@ var meters = 12;
 /*********************************************************/
 // The gravity variable with gravity of planet - change it to
 // the gravity of the moon, and it will reflect accurately
-//
-// Note: It is in units of domElementLocs - but can you change it to
+//                          
+// Note: It is in units of meters - but can you change it to
 // feet (gravity accelerates at 32/f/s/s on Earth)? Hint: create 
 // a new variable - this is a ratio problem
 /*********************************************************/
-var gravity = .5;
+var gravity = 10;
 
 /*********************************************************/
 // e is the elasticticy of the ball - it should be less than 1,
@@ -48,6 +48,7 @@ var lastTime = 0;
 var state = 0;
 var fallstate = 0;
 var bouncestate = 0;
+
 var linestate = 0;
 var heightState =0;
 var resetstate = 0;
@@ -57,7 +58,6 @@ var divWidth;
 var sec = 0;
 
 var bImg; 
-
 var canvas;
 
 function setup() {
@@ -115,12 +115,13 @@ function bouncer() {
     //if (resetstate == 0) {
       ballHeight = ballHeight + (distancePerSec * dir);
       
-      if (resetstate == 1) {
+      /*if (resetstate == 1) {
         //lastTime = millis();
         ballHeight = margin;
         sec = 0;
-      }
-    if(resetstate === 0) {
+       // bouncestate = 0;
+      }*/
+    //if(resetstate === 0) {
     if (bouncestate === 0) {
       if (millis() >= lastTime + 1000 / 100) {
         lastTime = millis();
@@ -137,9 +138,9 @@ function bouncer() {
   
     }
 
-    bounce = margin + ((height - margin)) - ((height - margin) * e);
+    bounce = margin + ((canvHeight - margin)) - ((canvHeight - margin) * e);
 
-    if (ballHeight > height - tickspace/4) {
+    if (ballHeight > canvHeight - tickspace/4) {
       dir = dir * -1;
       fallstate = 1;
 
@@ -150,8 +151,8 @@ function bouncer() {
 
     if (fallstate == 1) {
       
-      stroke(255);
-      line(0, bounce, width, bounce);
+      //stroke(255);
+      //line(0, bounce, width, bounce);
 
       if (ballHeight < bounce) {
         dir *= -1;
@@ -159,7 +160,7 @@ function bouncer() {
       }
 
       if (e < .0005) {
-        ballHeight = height - tickspace/4;
+        ballHeight = canvHeight - tickspace/4;
         bouncestate = 2;
       }
 
@@ -170,18 +171,20 @@ function bouncer() {
       }
 
     }
-    }
+    //}
     
   }
   
   function sliderValues() {
-  if (state == 0) {
+  if (state === 0) {
 
     tickspace = tickSlider.value();
     meters = meterSlider.value();
 
     margin = canvHeight - tickspace * meters;
     ballHeight = margin;
+    
+    
   }
 }
 }
@@ -189,7 +192,7 @@ function bouncer() {
 function dropClick() {
   state = 1;
   lastTime = millis();
-  resetstate = 0;
+  //resetstate = 0;
   //canvas.size(document.getElementById("canvasLoc").clientWidth, document.getElementById("canvasLoc").clientHeight);
   
   //dropButton.mousePressed(dropClick);
@@ -202,7 +205,9 @@ function pauseClick() {
 }
 function resetClick() {
   lastTime = millis();
-  resetstate = 1;
+  
+  //ballHeight = ballHeight + (distancePerSec * dir);
+  //resetstate = 1;
   //state--;
   //lastTime = 0;
   //bouncestate = 1;
@@ -210,7 +215,16 @@ function resetClick() {
         lastTime = millis();
         sec = sec - (1 / 100);
       }*/
-  //state = 0;
+  sec = 0;
+  state = 0;
+  fallstate = 0;
+  bouncestate = 0;
+  
+  e = .75;
+  
+  //if()
+  
+  
   //if(state == 1) {
   //  ballHeight = margin;
   //}
@@ -280,5 +294,8 @@ function mouseWheel(event) {
     if(canvHeight < document.getElementById("canvasLoc").clientHeight) {
       canvHeight = document.getElementById("canvasLoc").clientHeight;
     }
+    /*if(ballHeight < document.getElementById("canvasLoc").clientHeight-100) {
+      canvHeight -= event.delta;
+    }*/
   }
 }
