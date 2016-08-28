@@ -1,15 +1,16 @@
 var canvHeight;
 
-var dropButton, pauseButton, resetButton, tickSlider, meterSlider;
+var dropButton, pauseButton, resetButton, tickSlider, tickLab, meterSlider, meterLab;
 
 // tickspace is the space between ticks, in meters
 var tickspace = 50;
 
+// meters is the default height of the ball times tickspace
 var meters = 12;
 
 /*********************************************************/
-// The gravity variable with gravity of planet - change it to
-// the gravity of the moon, and it will reflect accurately
+// The gravity variable reflects with gravity of planet - change 
+// it to the gravity of the moon, and it will reflect accurately
 //                          
 // Note: It is in units of meters - but can you change it to
 // feet (gravity accelerates at 32/f/s/s on Earth)? Hint: create 
@@ -37,6 +38,12 @@ var margin;
 // it is the starting height
 /*********************************************************/
 var ballHeight;
+
+var drag;
+var terminalvel;
+var dragcoef = .5;
+
+var squisher = 1;
 
 var distancePerSec = 0;
 var dir = 1;
@@ -82,11 +89,13 @@ function setup() {
   createElement('span','').class('glyphicon glyphicon-repeat').attribute("arial-hidden","true").parent(resetButton);
   resetButton.mousePressed(resetClick);
 
-  createElement('label', 'Tickspace').id('tickLab').parent('sliderLoc');
-  tickSlider = createSlider(10, 100, tickspace).parent('tickLab');
+  tickLab = createElement('label', 'Tickspace').parent('sliderLoc');
+  tickSlider = createSlider(10, 100, tickspace).parent('sliderLoc');
   
-  createElement('label', 'Height in Meters').id('meterLab').parent('sliderLoc');
-  meterSlider = createSlider(1, 100, meters).parent('meterLab');
+  meterLab = createElement('label').parent('sliderLoc');
+  meterSlider = createSlider(1, 500, meters).parent('sliderLoc');
+  
+  println(dropButton.elt);
 
 }
 
@@ -94,6 +103,9 @@ function draw() {
   canvas.size(document.getElementById("canvasLoc").clientWidth, document.getElementById("canvasLoc").clientHeight);
   
   background(bImg);
+  
+  tickLab.elt.textContent = 'Tickspace: '+tickspace+' px';
+  meterLab.elt.textContent = 'Height: '+meters+' meters';
 
   speedometer();
   
@@ -147,6 +159,13 @@ function bouncer() {
       e = e * e;
 
       bouncestate = 1;
+      
+      
+      
+      squisher = squisher - .1;
+      if(squisher < .75) {
+        squisher = .75
+      }
     }
 
     if (fallstate == 1) {
@@ -166,6 +185,7 @@ function bouncer() {
 
       if (bouncestate == 2) {
         sec = 0;
+        squisher = 1;//squisher + .3;
         //state = 0;
         //dropButton.mousePressed(dropClick);
       }
@@ -196,6 +216,10 @@ function dropClick() {
   //canvas.size(document.getElementById("canvasLoc").clientWidth, document.getElementById("canvasLoc").clientHeight);
   
   //dropButton.mousePressed(dropClick);
+  
+  //document.getElementById('canvasLoc').scrollIntoView({behavior: "smooth"});
+  /* usage */
+scroll.To('canvasLoc');
 }
 function pauseClick() {
   //state = 0;
@@ -242,16 +266,17 @@ function ball() {
   noStroke();
   fill(70, 100, 200);
   ellipseMode(RADIUS);
-  ellipse(document.getElementById("canvasLoc").clientWidth / 2, ballHeight, tickspace/4, tickspace/4);
+  ellipse(document.getElementById("canvasLoc").clientWidth / 2, ballHeight, tickspace/4, (tickspace/4)-sec);
 }
 
 function speedometer() {
   strokeWeight(2);
   stroke(100);
+  fill(250,240,240);
    arc(width-50, height-20, 60, 60, PI, 2*PI);
    line(width-20,height-20,width-80,height-20);
   var p;
-  p=((sec*3)/6)*PI;
+  p=((distancePerSec/10)/6)*PI;
   
   stroke(240,0,0);
   line(width-50-(cos(p)*10),height-20-(sin(p)*10),width-50-(cos(p)*30),height-20-(sin(p)*30));
@@ -266,6 +291,8 @@ function axis() {
   for (var i = 0; i < canvHeight; i = i + tickspace) {
     stroke(255);
     line(10, canvHeight - i, 20, canvHeight - i);
+    
+    line(10, canvHeight - i-tickspace/2, 15, canvHeight - i-tickspace/2);
 
     fill(255);
     noStroke();
@@ -273,29 +300,89 @@ function axis() {
     textSize(10);
     text(i / tickspace + " m", 25, canvHeight - i);
 
-    if (ballHeight < i+5 && ballHeight > i-5 ) {
+    /*if (ballHeight < i+5 && ballHeight > i-5 ) {
       tickfill=255;
     }
     if (ballHeight < canvHeight-i+5 && ballHeight > canvHeight-i-5) {
       textfill=255;
-    }
-  }
-}
-function mouseWheel(event) {
-  //println(event.delta);
-  if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-    canvHeight += event.delta;
-    //println(meters);
-    //state = 0;
-    //bouncestate = 1;
-    //margin = canvHeight - tickspace * meters;
-    //ballHeight = margin;
-    println(canvHeight);
-    if(canvHeight < document.getElementById("canvasLoc").clientHeight) {
-      canvHeight = document.getElementById("canvasLoc").clientHeight;
-    }
-    /*if(ballHeight < document.getElementById("canvasLoc").clientHeight-100) {
-      canvHeight -= event.delta;
     }*/
   }
 }
+function mouseWheel(event) {
+  if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+    canvHeight += event.delta;
+
+    if(canvHeight < document.getElementById("canvasLoc").clientHeight) {
+      canvHeight = document.getElementById("canvasLoc").clientHeight;
+    }
+    
+  }
+}
+
+var scroll = (function() {
+
+    var elementPosition = function(a) {
+        return function() {
+            return a.getBoundingClientRect().top;
+        };
+    };
+
+    var scrolling = function( elementID ) {
+
+        var el = document.getElementById( elementID ),
+            elPos = elementPosition( el ),
+            duration = 50,
+            increment = Math.round( Math.abs( elPos() )/40 ),
+            time = Math.round( duration/increment ),
+            prev = 0,
+            E;
+
+        function scroller() {
+            E = elPos();
+
+            if (E === prev) {
+                return;
+            } else {
+                prev = E;
+            }
+
+            increment = (E > -20 && E < 20) ? ((E > - 5 && E < 5) ? 1 : 5) : increment;
+
+            if (E > 1 || E < -1) {
+
+                if (E < 0) {
+                    window.scrollBy( 0,-increment );
+                } else {
+                    window.scrollBy( 0,increment );
+                }
+
+                setTimeout(scroller, time);
+
+            } else {
+
+                el.scrollTo( 0,0 );
+
+            }
+        }
+
+        scroller();
+    };
+
+    return {
+        To: scrolling
+    }
+
+})();
+
+/*function Scroll_To(elem, pos)
+{
+    var y = elem.scrollTop;
+    y += (pos - y) * 0.3;
+    if (Math.abs(y-pos) < 2)
+    {
+        elem.scrollTop = pos;
+        return;
+    }
+    elem.scrollTop = y;
+    setTimeout(Scroll_To, 40, elem, pos);   
+}*/
