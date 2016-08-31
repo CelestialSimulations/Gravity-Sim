@@ -1,6 +1,26 @@
+/*class Shape{
+  //Shape(){}
+  //function draw(){
+    if(mouseIsPressed){
+      fill(255,0,0);
+      rect(20,20,40,40);
+    } else {
+      fill(0,0,255);
+      ellipse(40,40,40,40);
+    }
+  }
+}*/
+
 var canvHeight;
 
-var dropButton, pauseButton, resetButton, tickSlider, tickLab, meterSlider, meterLab;
+var dropButton, pauseButton, resetButton,
+  tickSlider, tickLab,
+  meterSlider, meterLab,
+  addBallBtn, addLab,
+  inputLab, inputName,
+  gravitySlider, gravityLab;
+
+var ballName = 'Earth Ball'
 
 // tickspace is the space between ticks, in meters
 var tickspace = 50;
@@ -39,9 +59,15 @@ var margin;
 /*********************************************************/
 var ballHeight;
 
-var drag;
-var terminalvel;
+//var drag;
+var terminalvel; //sqrt( (2*mass*gravity)/(density*area*dragcoef) );
+var mass = 1; // (gram)
+var area; //4 * PI * exp(5);
 var dragcoef = .5;
+
+// q
+//density of air at sea level when the temperature is 15 °C is 1.225 kg/m3.
+var airdensity = 1.225; // = airpressure/(gas constant*(Celsius + 273.15));
 
 var squisher = 1;
 
@@ -57,45 +83,62 @@ var fallstate = 0;
 var bouncestate = 0;
 
 var linestate = 0;
-var heightState =0;
+var heightState = 0;
 var resetstate = 0;
+
+var add = false;
 
 var divWidth;
 
 var sec = 0;
 
-var bImg; 
+var bImg;
 var canvas;
 
+var xscaler = 3;
+ 
+//Shape shape;
+
 function setup() {
-  
+
   bImg = loadImage('libraries/starry_sky.jpg')
-  
+
   canvHeight = document.getElementById("canvasLoc").clientHeight;
 
   divWidth = document.getElementById("canvasLoc").clientWidth;
-
+  
+  //Javascript loaded html
   canvas = createCanvas(divWidth, canvHeight);
   canvas.parent("canvasLoc");
 
   dropButton = createButton('Drop').class('btn btn-primary btn-sm').parent('drop_button');
   dropButton.mousePressed(dropClick);
-  
+
   pauseButton = createButton('').class('btn btn-primary btn-sm').parent('pause_button');
-  createElement('span','').class('glyphicon glyphicon-pause').attribute("arial-hidden","true").parent(pauseButton);
+  createElement('span', '').class('glyphicon glyphicon-pause').attribute("arial-hidden", "true").parent(pauseButton);
   pauseButton.mousePressed(pauseClick);
-  
+
   resetButton = createButton('').class('btn btn-primary btn-sm').parent('reset_button');
-  createElement('span','').class('glyphicon glyphicon-repeat').attribute("arial-hidden","true").parent(resetButton);
+  createElement('span', '').class('glyphicon glyphicon-repeat').attribute("arial-hidden", "true").parent(resetButton);
   resetButton.mousePressed(resetClick);
 
   tickLab = createElement('label', 'Tickspace').parent('sliderLoc');
   tickSlider = createSlider(10, 100, tickspace).parent('sliderLoc');
-  
+
   meterLab = createElement('label').parent('sliderLoc');
-  meterSlider = createSlider(1, 500, meters).parent('sliderLoc');
+  meterSlider = createSlider(1, 150, meters).parent('sliderLoc');
   
-  println(dropButton.elt);
+  addBallBtn = createButton('add ').class('btn btn-primary btn-sm').parent('ballSettings');
+  createElement('span', '').class('glyphicon glyphicon-plus').attribute("arial-hidden", "true").parent(addBallBtn);
+  addBallBtn.mousePressed(addBall);
+
+  inputLab = createElement('label', 'Name of Ball:').parent('ballSettings');
+  inputName = createElement('span', ballName).attribute('contenteditable','true').parent('ballSettings');
+
+  gravityLab = createElement('label').parent('ballSettings');
+  gravitySlider = createSlider(.5, 200, gravity).parent('ballSettings');
+
+  //println(dropButton.elt);
 
 }
 
@@ -103,159 +146,45 @@ function draw() {
   canvas.size(document.getElementById("canvasLoc").clientWidth, document.getElementById("canvasLoc").clientHeight);
   
   background(bImg);
+  //rect(10,10,10,10);
+  //test();
   
-  tickLab.elt.textContent = 'Tickspace: '+tickspace+' px';
-  meterLab.elt.textContent = 'Height: '+meters+' meters';
-
-  speedometer();
+  //println(addBall());
   
-  ball();
-
+  //xscaler = 100;
+  
+  if(add === true){
+    //xscaler += 30;
+    //ball(document.getElementById("canvasLoc").clientWidth / xscaler);
+  }
+  
+  //add = false;
+  
+  // gravity, height, elaticity, name
+  simulation(gravity, meters, e, ballName, document.getElementById("canvasLoc").clientWidth/2);
+  
   axis();
-  
-  bouncer();
 
 }
 
-function bouncer() {
-  
-  sliderValues();
+function simulation(g, m, el, n, x) {
+  speedometer(x);
 
-  if (state == 1) {
-    distancePerSec = pow((tickspace * gravity), sec);
-    
-    //if (resetstate == 0) {
-      ballHeight = ballHeight + (distancePerSec * dir);
-      
-      /*if (resetstate == 1) {
-        //lastTime = millis();
-        ballHeight = margin;
-        sec = 0;
-       // bouncestate = 0;
-      }*/
-    //if(resetstate === 0) {
-    if (bouncestate === 0) {
-      if (millis() >= lastTime + 1000 / 100) {
-        lastTime = millis();
-        sec = sec + (1 / 100);
-      }
-      
-    }
+  //ball(x);
 
-    if (bouncestate == 1) {
-      if (millis() >= lastTime + 1000 / 100) {
-        lastTime = millis();
-        sec = sec - (1 / 100);
-      }
-  
-    }
-
-    bounce = margin + ((canvHeight - margin)) - ((canvHeight - margin) * e);
-
-    if (ballHeight > canvHeight - tickspace/4) {
-      dir = dir * -1;
-      fallstate = 1;
-
-      e = e * e;
-
-      bouncestate = 1;
-      
-      
-      
-      squisher = squisher - .1;
-      if(squisher < .75) {
-        squisher = .75
-      }
-    }
-
-    if (fallstate == 1) {
-      
-      //stroke(255);
-      //line(0, bounce, width, bounce);
-
-      if (ballHeight < bounce) {
-        dir *= -1;
-        bouncestate = 0;
-      }
-
-      if (e < .0005) {
-        ballHeight = canvHeight - tickspace/4;
-        bouncestate = 2;
-      }
-
-      if (bouncestate == 2) {
-        sec = 0;
-        squisher = 1;//squisher + .3;
-        //state = 0;
-        //dropButton.mousePressed(dropClick);
-      }
-
-    }
-    //}
-    
-  }
-  
-  function sliderValues() {
-  if (state === 0) {
-
-    tickspace = tickSlider.value();
-    meters = meterSlider.value();
-
-    margin = canvHeight - tickspace * meters;
-    ballHeight = margin;
-    
-    
-  }
-}
+  bouncer(g, m, el, n, x);
 }
 
-function dropClick() {
-  state = 1;
-  lastTime = millis();
-  //resetstate = 0;
-  //canvas.size(document.getElementById("canvasLoc").clientWidth, document.getElementById("canvasLoc").clientHeight);
+function bouncer(grav, m, el,name, xpos) {
   
-  //dropButton.mousePressed(dropClick);
+  tickLab.elt.textContent = 'Tickspace: ' + tickspace + ' px';
+  meterLab.elt.textContent = 'Height: ' + meters + ' meters';
+  gravityLab.elt.innerHTML = 'Gravity: ' + gravity + ' m/s/s';
   
-  //document.getElementById('canvasLoc').scrollIntoView({behavior: "smooth"});
-  /* usage */
-scroll.To('canvasLoc');
-}
-function pauseClick() {
-  //state = 0;
-  //lastTime = millis();
-  state=3;
-  //println(state);
-}
-function resetClick() {
-  lastTime = millis();
-  
-  //ballHeight = ballHeight + (distancePerSec * dir);
-  //resetstate = 1;
-  //state--;
-  //lastTime = 0;
-  //bouncestate = 1;
-  /*if (millis() >= lastTime + 1000 / 100) {
-        lastTime = millis();
-        sec = sec - (1 / 100);
-      }*/
-  sec = 0;
-  state = 0;
-  fallstate = 0;
-  bouncestate = 0;
-  
-  e = .75;
-  
-  //if()
-  
-  
-  //if(state == 1) {
-  //  ballHeight = margin;
-  //}
-  //ballHeight = ballHeight - (distancePerSec * dir);
-}
+  fill(240);
+  textAlign(CENTER);
+  text(name, xpos, ballHeight - 20);
 
-function ball() {
   stroke(240, 0, 0);
   line(0, ballHeight, width, ballHeight);
 
@@ -266,33 +195,188 @@ function ball() {
   noStroke();
   fill(70, 100, 200);
   ellipseMode(RADIUS);
-  ellipse(document.getElementById("canvasLoc").clientWidth / 2, ballHeight, tickspace/4, (tickspace/4)-sec);
+  ellipse(xpos, ballHeight, tickspace / 4, (tickspace / 4));
+
+  if (state === 0) {
+
+      tickspace = tickSlider.value();
+      meters = meterSlider.value();
+      ballName = inputName.elt.innerHTML;
+
+      margin = canvHeight - tickspace * meters;
+      ballHeight = margin;
+
+
+    }
+
+  if (state == 1) {
+    //area = /*4 * */ PI * exp(5);
+   // println(sqrt((2 * 5000 * gravity) / (airdensity * area * dragcoef)));
+    //terminalvel = sqrt((2 * 5000 * gravity) / (airdensity * area * dragcoef));
+    
+    //var drag;
+    //terminalvel = sqrt( (2*mass*gravity)/(airdensity*area*dragcoef) );
+    //mass = 1;// (gram)
+    //var dragcoef = .5;
+
+    // q
+    //density of air at sea level when the temperature is 15 °C is 1.225 kg/m3.
+    //var airdensity = 1.225;// = airpressure/(gas constant*(Celsius + 273.15));
+
+    //println(distancePerSec);
+    /*if(pow((tickspace * gravity), sec) < terminalvel) {
+        distancePerSec = pow((tickspace * gravity), sec);
+      }
+    if(pow((tickspace * gravity), sec) > terminalvel) {
+      distancePerSec = terminalvel;
+      //println(distancePerSec);
+      
+    }*/
+
+    distancePerSec = pow((tickspace * gravity), sec);
+
+    ballHeight = ballHeight + (distancePerSec * dir);
+
+
+    if (bouncestate === 0) {
+      if (millis() >= lastTime + 1000 / 100) {
+        lastTime = millis();
+        sec = sec + (1 / 100);
+      }
+
+    }
+
+    if (bouncestate == 1) {
+      if (millis() >= lastTime + 1000 / 100) {
+        lastTime = millis();
+        sec = sec - (1 / 100);
+      }
+
+    }
+
+    bounce = margin + ((canvHeight - margin)) - ((canvHeight - margin) * e);
+
+    if (ballHeight > canvHeight - tickspace / 4) {
+      dir = dir * -1;
+      fallstate = 1;
+
+      e = e * e;
+
+      bouncestate = 1;
+
+      /*squisher = squisher - .1;
+      if (squisher < .75) {
+        squisher = .75
+      }*/
+    }
+
+    if (fallstate == 1) {
+
+      //stroke(255);
+      //line(0, bounce, width, bounce);
+
+      if (ballHeight < bounce) {
+        dir *= -1;
+        bouncestate = 0;
+      }
+
+      if (e < .0005) {
+        ballHeight = canvHeight - tickspace / 4;
+        bouncestate = 2;
+      }
+
+      if (bouncestate == 2) {
+        sec = 0;
+        //squisher = 1; //squisher + .3;
+        //state = 0;
+        //dropButton.mousePressed(dropClick);
+      }
+
+    }
+    //}
+
+  }
+}
+
+function dropClick() {
+  state = 1;
+  lastTime = millis();
+
+  document.getElementById('canvasLoc').scrollIntoView({behavior: "smooth"});
+  
+}
+
+function pauseClick() {
+
+  state = 3;
+  
+}
+
+function resetClick() {
+  lastTime = millis();
+
+  sec = 0;
+  state = 0;
+  fallstate = 0;
+  bouncestate = 0;
+
+  e = .75;
+
+}
+function addBall() {
+  
+    xscaler = xscaler + 1;
+    add = true;
+    
+    
+  }
+function test() {
+  rect(10,10,10,10);
+}
+
+function ball(xpos) {
+  fill(240);
+  textAlign(CENTER);
+  text(ballName, xpos, ballHeight - 20);
+
+  stroke(240, 0, 0);
+  line(0, ballHeight, width, ballHeight);
+
+  /*fill(230);
+  noStroke();
+  rect(0, 0, width, ballHeight);*/
+
+  noStroke();
+  fill(70, 100, 200);
+  ellipseMode(RADIUS);
+  ellipse(xpos, ballHeight, tickspace / 4, (tickspace / 4) - sec);
 }
 
 function speedometer() {
+  ellipseMode(CENTER);
   strokeWeight(2);
   stroke(100);
-  fill(250,240,240);
-   arc(width-50, height-20, 60, 60, PI, 2*PI);
-   line(width-20,height-20,width-80,height-20);
+  fill(250, 240, 240);
+  arc(width - 50, height - 20, 60, 60, PI, 2 * PI);
+  line(width - 20, height - 20, width - 80, height - 20);
   var p;
-  p=((distancePerSec/10)/6)*PI;
-  
-  stroke(240,0,0);
-  line(width-50-(cos(p)*10),height-20-(sin(p)*10),width-50-(cos(p)*30),height-20-(sin(p)*30));
+  p = ((distancePerSec / 10) / 6) * PI;
+
+  stroke(240, 0, 0);
+  line(width - 50 - (cos(p) * 10), height - 20 - (sin(p) * 10), width - 50 - (cos(p) * 30), height - 20 - (sin(p) * 30));
 }
 
 function axis() {
   stroke(255);
   line(10, 0, 10, canvHeight);
-  
+
   var tickfill = 0;
   var textfill = 0;
   for (var i = 0; i < canvHeight; i = i + tickspace) {
     stroke(255);
     line(10, canvHeight - i, 20, canvHeight - i);
-    
-    line(10, canvHeight - i-tickspace/2, 15, canvHeight - i-tickspace/2);
+
+    line(10, canvHeight - i - tickspace / 2, 15, canvHeight - i - tickspace / 2);
 
     fill(255);
     noStroke();
@@ -308,81 +392,28 @@ function axis() {
     }*/
   }
 }
+
 function mouseWheel(event) {
-  if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
     canvHeight += event.delta;
 
-    if(canvHeight < document.getElementById("canvasLoc").clientHeight) {
+    if (canvHeight < document.getElementById("canvasLoc").clientHeight) {
       canvHeight = document.getElementById("canvasLoc").clientHeight;
     }
-    
+
   }
 }
 
-var scroll = (function() {
+function touchMoved() {
+  if (touchX > 0 && touchX < width && touchY > 0 && touchY < height) {
+    //canvHeight += event.delta;
+    canvHeight++;
 
-    var elementPosition = function(a) {
-        return function() {
-            return a.getBoundingClientRect().top;
-        };
-    };
-
-    var scrolling = function( elementID ) {
-
-        var el = document.getElementById( elementID ),
-            elPos = elementPosition( el ),
-            duration = 50,
-            increment = Math.round( Math.abs( elPos() )/40 ),
-            time = Math.round( duration/increment ),
-            prev = 0,
-            E;
-
-        function scroller() {
-            E = elPos();
-
-            if (E === prev) {
-                return;
-            } else {
-                prev = E;
-            }
-
-            increment = (E > -20 && E < 20) ? ((E > - 5 && E < 5) ? 1 : 5) : increment;
-
-            if (E > 1 || E < -1) {
-
-                if (E < 0) {
-                    window.scrollBy( 0,-increment );
-                } else {
-                    window.scrollBy( 0,increment );
-                }
-
-                setTimeout(scroller, time);
-
-            } else {
-
-                el.scrollTo( 0,0 );
-
-            }
-        }
-
-        scroller();
-    };
-
-    return {
-        To: scrolling
+    if (canvHeight < document.getElementById("canvasLoc").clientHeight) {
+      canvHeight = document.getElementById("canvasLoc").clientHeight;
     }
 
-})();
+    return false;
 
-/*function Scroll_To(elem, pos)
-{
-    var y = elem.scrollTop;
-    y += (pos - y) * 0.3;
-    if (Math.abs(y-pos) < 2)
-    {
-        elem.scrollTop = pos;
-        return;
-    }
-    elem.scrollTop = y;
-    setTimeout(Scroll_To, 40, elem, pos);   
-}*/
+  }
+}

@@ -14,7 +14,9 @@
 
 /* Large Devices, Wide Screens */
     @media only screen and (max-width : 1200px) {
-
+      #domElementLoc {
+        height: 92vh;
+      }
     }
 
     /* Medium Devices, Desktops */
@@ -30,7 +32,7 @@
     /* Small Devices, Tablets */
     @media only screen and (max-width : 768px) {
       #domElementLoc {
-        height: inherit;
+        height: 92vh;
       }
     }
 
@@ -46,12 +48,15 @@
         #domElementLoc {
         height: inherit;
       }
+      h2 {
+        font-size: 1.5em;
+      }
     }
 
 body {
   padding-bottom: 10px;
   margin: 0;
-  /*background-image: url("libraries/circuit-board-background.jpg");*/
+  background-image: url("libraries/circuit-board-background.jpg");
   
 }
 
@@ -70,17 +75,26 @@ h2 {
   box-shadow: rgba(0,0,0,1) 0 1px 0;
   border-bottom: 1px solid black;
 }
+h4 {
+  font-family: orbiter;
+  color: white;
+}
+#ballSettings {
+  border: ridge 10px gray;
+  padding: 5px;
+}
 
 canvas {
   vertical-align: top;
-  border: ridge 10px gray;
+  /*border: ridge 10px gray;*/
+
 }
 table {
   margin-bottom: 20px;
 }
 
 #canvasLoc {
-  /*border: ridge 10px gray;*/
+  border: ridge 10px gray;
   height: 92vh;
 }
 
@@ -101,8 +115,21 @@ table {
   color: white;
   margin-bottom: 0px;
 }
+/*.textLab {
+  float: left;
+}
+.text {
+  float:left;
+  width: auto;
+  background: rgba(100,100,100,.5);
+  color: white;
+  /*display: inline-block;*
+}*/
+span {
+  color: white;
+}
 
-input {
+input:not(.text) {
   margin-left: 5px;
   width: 95%;
   /*height: 30px;*/
