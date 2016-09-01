@@ -1,16 +1,3 @@
-/*class Shape{
-  //Shape(){}
-  //function draw(){
-    if(mouseIsPressed){
-      fill(255,0,0);
-      rect(20,20,40,40);
-    } else {
-      fill(0,0,255);
-      ellipse(40,40,40,40);
-    }
-  }
-}*/
-
 var canvHeight;
 
 var dropButton, pauseButton, resetButton,
@@ -18,7 +5,30 @@ var dropButton, pauseButton, resetButton,
   meterSlider, meterLab,
   addBallBtn, addLab,
   inputLab, inputName,
-  gravitySlider, gravityLab;
+  gravitySlider, gravityLab, slider;
+
+var ballObjs = [{
+  xpos: 30,
+  ypos: 100,
+  fillColor: 240,
+  dir: 1,
+  elasticity: .75,
+  time: 0,
+  speed: 0,
+  gravity: 10,
+  last: 0,
+  endTime: .0005,
+  bstate: 0,
+  fstate: 0,
+  marg: 0,
+  met: 12
+}];
+
+var dropped = 1;
+var turnstate = 0;
+
+var index  = 0;
+
 
 var ballName = 'Earth Ball'
 
@@ -86,7 +96,7 @@ var linestate = 0;
 var heightState = 0;
 var resetstate = 0;
 
-var add = false;
+//var add = false;
 
 var divWidth;
 
@@ -96,7 +106,7 @@ var bImg;
 var canvas;
 
 var xscaler = 3;
- 
+
 //Shape shape;
 
 function setup() {
@@ -106,10 +116,13 @@ function setup() {
   canvHeight = document.getElementById("canvasLoc").clientHeight;
 
   divWidth = document.getElementById("canvasLoc").clientWidth;
-  
+
   //Javascript loaded html
   canvas = createCanvas(divWidth, canvHeight);
   canvas.parent("canvasLoc");
+
+  slider = createSlider(1, 100, 12).id('heightSlider');
+  slider.parent('ballSettings');
 
   dropButton = createButton('Drop').class('btn btn-primary btn-sm').parent('drop_button');
   dropButton.mousePressed(dropClick);
@@ -127,63 +140,158 @@ function setup() {
 
   meterLab = createElement('label').parent('sliderLoc');
   meterSlider = createSlider(1, 150, meters).parent('sliderLoc');
-  
+
   addBallBtn = createButton('add ').class('btn btn-primary btn-sm').parent('ballSettings');
   createElement('span', '').class('glyphicon glyphicon-plus').attribute("arial-hidden", "true").parent(addBallBtn);
-  addBallBtn.mousePressed(addBall);
+  addBallBtn.mousePressed(add);
 
   inputLab = createElement('label', 'Name of Ball:').parent('ballSettings');
-  inputName = createElement('span', ballName).attribute('contenteditable','true').parent('ballSettings');
+  inputName = createElement('span', ballName).attribute('contenteditable', 'true').parent('ballSettings');
 
   gravityLab = createElement('label').parent('ballSettings');
   gravitySlider = createSlider(.5, 200, gravity).parent('ballSettings');
-
-  //println(dropButton.elt);
 
 }
 
 function draw() {
   canvas.size(document.getElementById("canvasLoc").clientWidth, document.getElementById("canvasLoc").clientHeight);
+
+  background(80);
+
+  //ball objects
+  noStroke();
+  fill(255);
+  for (var i = 0; i < ballObjs.length; i++) {
+    
+    if(state === 0) {
+      
+      if(turnstate === 0) {
+       ballObjs[i].marg = canvHeight - tickspace * ballObjs[i].met;//meters;
+       ballObjs[i].ypos = ballObjs[i].marg; 
+      }
+      //turnstate = 0;
+      
+      if (mouseX > ballObjs[i].xpos - 12 && mouseX < ballObjs[i].xpos + 12 && mouseY > ballObjs[i].ypos - 12 && mouseY < ballObjs[i].ypos + 12) {
+        ballObjs[i].fillColor = 100; //ballObjs[i].fillColor - 10;
+        if (mouseIsPressed) {
+          //ballObjs.splice(i, 1);
+          //slider.attribute('value', ballObjs[i].ypos);
   
-  background(bImg);
-  //rect(10,10,10,10);
-  //test();
+          document.getElementById('heightSlider').value = ballObjs[i].met;
+          index = ballObjs.map(function(d) {
+            return d.xpos
+          }).indexOf(ballObjs[i].xpos);
+          
+          turnstate = 1;
+        }
+      } else {
+        ballObjs[i].fillColor = 240;
+      }
+      
+      if (turnstate == 1) {
+        //document.getElementById('heightSlider').value = meters;
+        ballObjs[index].ypos = canvHeight - tickspace*slider.value();
+        ballObjs[index].fillColor = 150;
+        println(document.getElementById('heightSlider').value);
+      }
+    }
+    fill(50, 50, ballObjs[i].fillColor);
+    ellipse(ballObjs[i].xpos, ballObjs[i].ypos, 25, 25);
+
+    if (state == 1) {
+      distancePerSec = pow((tickspace * gravity), ballObjs[i].time);
+      ballObjs[i].ypos = ballObjs[i].ypos + (distancePerSec * ballObjs[i].dir);
+
+      if (ballObjs[i].bstate === 0) {
+        if (millis() >= ballObjs[i].last + 1000 / 100) {
+          ballObjs[i].last = millis();
+          ballObjs[i].time = ballObjs[i].time + (1 / 100);
+        }
+      }
+
+      if (ballObjs[i].bstate == 1) {
+        if (millis() >= ballObjs[i].last + 1000 / 100) {
+          ballObjs[i].last = millis();
+          ballObjs[i].time = ballObjs[i].time - (1 / 100);
+        }
+      }
+      
+      bounce = ballObjs[i].marg + ((canvHeight - ballObjs[i].marg)) - ((canvHeight - ballObjs[i].marg) * ballObjs[i].elasticity);
+
+      if (ballObjs[i].ypos > canvHeight - 12) {
+        ballObjs[i].dir *= -1;
+        ballObjs[i].fstate = 1;
+        ballObjs[i].elasticity = ballObjs[i].elasticity * ballObjs[i].elasticity;
+        ballObjs[i].bstate = 1;
+      }
+      
+      if (ballObjs[i].fstate == 1) {
+
+        if (ballObjs[i].ypos < bounce) {
+          ballObjs[i].dir *= -1;
+          ballObjs[i].bstate = 0;
+        }
   
-  //println(addBall());
+        if (ballObjs[i].elasticity < ballObjs[i].endTime) {
+          ballObjs[i].ypos = canvHeight - 12;//tickspace / 4;
+          ballObjs[i].bstate = 2;
+          //sec = 0;
+          //ballObjs[i].time = 0;// ballObjs[i].endTime-.0005;
+        }
   
-  //xscaler = 100;
+        if (ballObjs[i].bstate == 2) {
+          ballObjs[i].time = 0;
+        }
   
-  if(add === true){
-    //xscaler += 30;
-    //ball(document.getElementById("canvasLoc").clientWidth / xscaler);
+      }
+
+    }
+    if (state == 2) {
+      ballObjs[i].ypos = 100;
+    }
+
   }
-  
-  //add = false;
-  
-  // gravity, height, elaticity, name
-  simulation(gravity, meters, e, ballName, document.getElementById("canvasLoc").clientWidth/2);
-  
+
   axis();
+  bouncer();
+  speedometer();
 
 }
 
-function simulation(g, m, el, n, x) {
-  speedometer(x);
-
-  //ball(x);
-
-  bouncer(g, m, el, n, x);
+function add() {
+  ballObjs.push({
+    xpos: 30,
+    ypos: slider.value(),
+    fillColor: 240,
+    dir: 1,
+    elasticity: .75,
+    time: 0,
+    speed: 0,
+    gravity: 10,
+    last: 0,
+    endTime: .0005,
+    bstate: 0,
+    fstate: 0,
+    marg: 0,
+    met: 12
+  });
+  for (var i = 1; i < ballObjs.length; i++) {
+    ballObjs[i].xpos += 30;
+  }
 }
 
-function bouncer(grav, m, el,name, xpos) {
-  
+
+
+
+function bouncer() {
+
   tickLab.elt.textContent = 'Tickspace: ' + tickspace + ' px';
   meterLab.elt.textContent = 'Height: ' + meters + ' meters';
   gravityLab.elt.innerHTML = 'Gravity: ' + gravity + ' m/s/s';
-  
+
   fill(240);
   textAlign(CENTER);
-  text(name, xpos, ballHeight - 20);
+  text(ballName, document.getElementById("canvasLoc").clientWidth / 2, ballHeight - 20);
 
   stroke(240, 0, 0);
   line(0, ballHeight, width, ballHeight);
@@ -195,25 +303,25 @@ function bouncer(grav, m, el,name, xpos) {
   noStroke();
   fill(70, 100, 200);
   ellipseMode(RADIUS);
-  ellipse(xpos, ballHeight, tickspace / 4, (tickspace / 4));
+  ellipse(document.getElementById("canvasLoc").clientWidth / 2, ballHeight, tickspace / 4, (tickspace / 4));
 
   if (state === 0) {
 
-      tickspace = tickSlider.value();
-      meters = meterSlider.value();
-      ballName = inputName.elt.innerHTML;
+    tickspace = tickSlider.value();
+    meters = meterSlider.value();
+    ballName = inputName.elt.innerHTML;
 
-      margin = canvHeight - tickspace * meters;
-      ballHeight = margin;
+    margin = canvHeight - tickspace * meters;
+    ballHeight = margin;
 
 
-    }
+  }
 
   if (state == 1) {
     //area = /*4 * */ PI * exp(5);
-   // println(sqrt((2 * 5000 * gravity) / (airdensity * area * dragcoef)));
+    // println(sqrt((2 * 5000 * gravity) / (airdensity * area * dragcoef)));
     //terminalvel = sqrt((2 * 5000 * gravity) / (airdensity * area * dragcoef));
-    
+
     //var drag;
     //terminalvel = sqrt( (2*mass*gravity)/(airdensity*area*dragcoef) );
     //mass = 1;// (gram)
@@ -233,9 +341,13 @@ function bouncer(grav, m, el,name, xpos) {
       
     }*/
 
-    distancePerSec = pow((tickspace * gravity), sec);
+    /*distancePerSec = pow((tickspace * gravity), sec);
 
     ballHeight = ballHeight + (distancePerSec * dir);
+    
+    //for(var i = 0; i > ballObjs.length; i++) {
+      //ballObjs[i].ypos = ballObjs[i].ypos + 500;//(distancePerSec * dir);
+    //}
 
 
     if (bouncestate === 0) {
@@ -264,16 +376,9 @@ function bouncer(grav, m, el,name, xpos) {
 
       bouncestate = 1;
 
-      /*squisher = squisher - .1;
-      if (squisher < .75) {
-        squisher = .75
-      }*/
     }
 
     if (fallstate == 1) {
-
-      //stroke(255);
-      //line(0, bounce, width, bounce);
 
       if (ballHeight < bounce) {
         dir *= -1;
@@ -287,13 +392,9 @@ function bouncer(grav, m, el,name, xpos) {
 
       if (bouncestate == 2) {
         sec = 0;
-        //squisher = 1; //squisher + .3;
-        //state = 0;
-        //dropButton.mousePressed(dropClick);
       }
 
-    }
-    //}
+    }*/
 
   }
 }
@@ -301,15 +402,18 @@ function bouncer(grav, m, el,name, xpos) {
 function dropClick() {
   state = 1;
   lastTime = millis();
+  turnstate = 0;
 
-  document.getElementById('canvasLoc').scrollIntoView({behavior: "smooth"});
-  
+  document.getElementById('canvasLoc').scrollIntoView({
+    behavior: "smooth"
+  });
+
 }
 
 function pauseClick() {
 
   state = 3;
-  
+
 }
 
 function resetClick() {
@@ -323,15 +427,17 @@ function resetClick() {
   e = .75;
 
 }
+
 function addBall() {
-  
-    xscaler = xscaler + 1;
-    add = true;
-    
-    
-  }
+
+  xscaler = xscaler + 1;
+  //add = true;
+
+
+}
+
 function test() {
-  rect(10,10,10,10);
+  rect(10, 10, 10, 10);
 }
 
 function ball(xpos) {
