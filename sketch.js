@@ -131,7 +131,7 @@ function setup() {
   heightSlider.parent('ballSettings');
 
   //gravityLab = createElement('label').parent('ballSettings');
-  //gravitySlider = createSlider(.5, 200, gravity).parent('ballSettings');
+  //gravitySlider = createSlider(.5, 200, 10).parent('ballSettings');
 
   delBallBtn = createButton('').class('btn btn-primary btn-sm').parent('ballSettings');
   createElement('span', '').class('glyphicon glyphicon-trash').attribute("arial-hidden", "true").parent(delBallBtn);
@@ -144,7 +144,7 @@ function draw() {
 
   background(30);
 
-  tickLab.elt.textContent = 'Size';//'Space b/w Meters: ' + tickspace + ' px';
+  tickLab.elt.textContent = 'Size';
   tickspace = 60.25-tickSlider.value();
   
   spaceLab.elt.innerHTML = 'Scale: ' + tickrise + ' m';
@@ -372,7 +372,7 @@ function mouseWheel(event) {
   }
 }
 
-function touchMoved() {
+/*function touchMoved() {
   if (touchX > 0 && touchX < width && touchY > 0 && touchY < height) {
     //canvHeight += event.delta;
     canvHeight++;
@@ -384,4 +384,4 @@ function touchMoved() {
     return false;
 
   }
-}
+}*/
