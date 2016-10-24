@@ -3,15 +3,15 @@ var canvHeight;
 var dropButton, pauseButton, resetButton,
   tickSlider, tickLab,
   spacesSlider, spaceLab,
-  //meterSlider, meterLab,
   addBallBtn, delBallBtn,
-  inputLab, inputName,
-  gravitySlider, gravityLab,
-  heightSlider, heightLab;
+  inputLab, inputName;
 
 var ballObjs = [{
   xpos: 70,
   ypos: canvHeight - tickspace * 12,
+  meters: 12,
+  radius: 10,
+  name: 'Ball',
   fillColor: 240,
   dir: 1,
   elasticity: .75,
@@ -21,17 +21,11 @@ var ballObjs = [{
   last: 0,
   bstate: 0,
   fstate: 0,
-  marg: 0,
-  met: 12,
-  radius: 10,
-  name: 'Ball'
+  marg: 0
 }];
 
-var dropped = 1;
 var turnstate = 0;
-
 var index = 0;
-
 
 var ballName = 'Ball'
 
@@ -125,13 +119,8 @@ function setup() {
   createElement('div').id('goright').style('float','left').style('margin-bottom','10px').parent('ballSettings');
   inputLab = createElement('label', 'Name of Ball:').style('width','inherit').style('margin-right','10px').parent('goright');
   inputName = createElement('span', ballName).id('name').style('width','inherit').attribute('contenteditable', 'true').parent('goright');
-
-  heightLab = createElement('label', 'Height').parent('ballSettings');
-  heightSlider = createSlider(1, 5000, 12).id('heightSlider');
-  heightSlider.parent('ballSettings');
-
-  //gravityLab = createElement('label').parent('ballSettings');
-  //gravitySlider = createSlider(.5, 200, 10).parent('ballSettings');
+  
+  settingsSetup();
 
   delBallBtn = createButton('').class('btn btn-primary btn-sm').parent('ballSettings');
   createElement('span', '').class('glyphicon glyphicon-trash').attribute("arial-hidden", "true").parent(delBallBtn);
@@ -151,7 +140,7 @@ function draw() {
   tickrise = spaceSlider.value();
 
   if (index < ballObjs.length) {
-    heightLab.elt.innerHTML = 'Height: ' + ballObjs[index].met + ' m';
+    settingsDrawLabelValue();
   }
 
   //ball objects
@@ -173,15 +162,16 @@ function draw() {
       if(ballObjs[i].radius <= 2) {
         ballObjs[i].radius = 2;
       }
-      ballObjs[i].marg = canvHeight - tickspace * ballObjs[i].met;
+      ballObjs[i].marg = canvHeight - tickspace * ballObjs[i].meters;
       ballObjs[i].ypos = ballObjs[i].marg;
 
+      //clicking ball
       if (mouseX > ballObjs[i].xpos - 12 && mouseX < ballObjs[i].xpos + 12 && mouseY > ballObjs[i].ypos - 12 && mouseY < ballObjs[i].ypos + 12) {
         ballObjs[i].fillColor = 100;
         if (mouseIsPressed) {
-
-          document.getElementById('heightSlider').value = ballObjs[i].met;
+          
           document.getElementById('name').textContent = ballObjs[i].name;
+          settingsSetValue(i);
 
           index = ballObjs.map(function(d) {
             return d.xpos
@@ -195,35 +185,39 @@ function draw() {
 
       if (turnstate == 1) {
         ballObjs[index].name = inputName.elt.innerHTML;
-        
-        ballObjs[index].met = heightSlider.value();
-        ballObjs[index].marg = canvHeight - tickspace * ballObjs[index].met;
+        ballObjs[index].marg = canvHeight - tickspace * ballObjs[index].meters;
         ballObjs[index].ypos = ballObjs[index].marg;
+        
+        settingsEdit();
 
         ballObjs[index].fillColor = 150;
       }
     }
 
     if (state == 1) {
-      distancePerSec = pow((ballObjs[i].met * ballObjs[i].gravity), ballObjs[i].time);
+      distancePerSec = pow((ballObjs[i].meters * ballObjs[i].gravity), ballObjs[i].time);
       ballObjs[i].ypos = ballObjs[i].ypos + (distancePerSec * ballObjs[i].dir);
 
       if (ballObjs[i].bstate === 0) {
+        // increasing the rate
         if (millis() >= ballObjs[i].last + 1000 / 100) {
           ballObjs[i].last = millis();
-          ballObjs[i].time = ballObjs[i].time + (1 / 100);
+          ballObjs[i].time = (ballObjs[i].time + (1 / 100));
         }
       }
 
       if (ballObjs[i].bstate == 1) {
+        // decreasing the rate
         if (millis() >= ballObjs[i].last + 1000 / 100) {
           ballObjs[i].last = millis();
-          ballObjs[i].time = ballObjs[i].time - (1 / 100);
+          ballObjs[i].time = (ballObjs[i].time - (1 / 100));
         }
       }
 
+      // value where ball comes back
       bounce = ballObjs[i].marg + ((canvHeight - ballObjs[i].marg)) - ((canvHeight - ballObjs[i].marg) * ballObjs[i].elasticity);
-
+      
+      // touches bottom
       if (ballObjs[i].ypos > canvHeight - ballObjs[i].radius) {
         ballObjs[i].dir *= -1;
         ballObjs[i].fstate = 1;
@@ -232,12 +226,14 @@ function draw() {
       }
 
       if (ballObjs[i].fstate == 1) {
-
+        
+        // bouncing 
         if (ballObjs[i].ypos < bounce) {
           ballObjs[i].dir *= -1;
           ballObjs[i].bstate = 0;
         }
 
+        // ending it
         if (ballObjs[i].elasticity < .0005) {
           ballObjs[i].ypos = canvHeight - ballObjs[i].radius;
           ballObjs[i].bstate = 2;
@@ -264,10 +260,13 @@ function draw() {
 function add() {
   ballObjs.unshift({
     xpos: 70,
-    ypos: 0, //heightSlider.value(),
+    ypos: 0,
     fillColor: 240,
-    dir: 1,
     elasticity: .75,
+    meters: heightSlider.value(),
+    radius: 10,
+    name: inputName.elt.innerHTML,
+    dir: 1,
     time: 0,
     speed: 0,
     gravity: 10,
@@ -275,9 +274,6 @@ function add() {
     bstate: 0,
     fstate: 0,
     marg: 0,
-    met: heightSlider.value(), //12,
-    radius: 10,
-    name: inputName.elt.innerHTML
   });
   for (var i = 1; i < ballObjs.length; i++) {
     ballObjs[i].xpos += 30;
@@ -327,7 +323,7 @@ function deleteBall() {
 
 function speedometer() {
   if (index < ballObjs.length) {
-   selectedBallSpeed = pow((ballObjs[index].met * ballObjs[index].gravity), ballObjs[index].time) 
+   selectedBallSpeed = pow((ballObjs[index].meters * ballObjs[index].gravity), ballObjs[index].time) 
   }
   ellipseMode(CENTER);
   strokeWeight(2);
