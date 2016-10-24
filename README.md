@@ -5,7 +5,7 @@ the rate of gravity! You are able to add multiple balls, delete them, change the
 
 ![preview](preview.png "Gravity Simulator")
 
-To explore it, we will first need to [get the the code](#getting-the-code...).
+To explore it, we will first need to [get the the code](#getting-the-code).
 
 However, I think we might be missing something. Changing the height and name of the balls is fun and all, but we're not seeing any interesting comparision here. Let's change that. We need to add a **new setting**.
 
@@ -25,11 +25,11 @@ To access the values of the selected ball, you can use:
 Adding a new setting will involve several steps, but I have carefully commented the code, so it should be fairly easy to follow if you read them.
 
 The steps are:
-1. [Declaring the label and slider variables](#declaring)
-2. [Drawing the elements](#drawing)
-3. [Displaying the value](#displaying-the-value)
-4. [Setting the value of the slider](#defining-slider-value)
-5. [Setting the value of the ball](#defining-ball-value)
+  1. [Declaring the label and slider variables](#declaring)
+  2. [Drawing the elements](#drawing)
+  3. [Displaying the value](#displaying-the-value)
+  4. [Setting the value of the slider](#defining-the-slider-value)
+  5. [Setting the value of the ball](#defining-the-ball-value)
 
 ## Declaring
 First, we need to declare two variables for the **label element** and the **slider element**. What is a variable, you may ask? A variable is a stored value with a name. In our program, define a variable like this:
