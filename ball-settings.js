@@ -33,6 +33,7 @@ function settingsSetup() {
 
   // Then we will need to create some HTML elements - the slider and it's label. To do this, start
   // by making your label variable equal:
+  //
   // createElement('label').parent('ballSettings');
   heightLabel = createElement('label').parent('ballSettings');
 
@@ -57,7 +58,10 @@ function settingsDrawLabelValue() {
   // Now we need to draw the label value. It needs to change when the value of
   // the slider changes. This is fairly straightforward. First, write the label variable as:
   //
-  // (label variable).elt.innerHTML = '(name of setting): ' + ballObjs[index].(setting) + ' (unit)';
+  // (label variable).elt.innerHTML
+  //
+  // Then have it equal:
+  // '(name of setting): ' + ballObjs[index].(setting) + ' (unit)';
   //
   // label variable             name                      setting   unit
   //   ↓                         ↓                           ↓        ↓

@@ -85,7 +85,7 @@ When the ball is selected, we want to be able to edit the ball's values. We are 
 ballObjs[index].gravity = gravitySlider.value();
 ```
 
-##Getting the Code...
+## Getting the Code...
 To get the code from the online repository to your computer, you can either download it or clone it.
 
 1. [Downloading it](#downloading)
