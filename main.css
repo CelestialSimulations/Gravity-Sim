@@ -10,7 +10,7 @@
   /*a name to be used later*/
   src: url(libraries/earth_orbiter/earthorbiter.ttf);
   /*URL to font*/
-}
+} 
 
 @media only screen and (max-width: 1500px) {
   #domElementLoc {

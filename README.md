@@ -115,6 +115,6 @@ git clone https://github.com/CelestialSimulations/Gravity-Sim.git
 ```
 It should appear in Documents folder quickly.
 
-You should rename your folder so you know it's yours. Now double click on your folder, and then open the file called **balls.js** in either Atom or the application P5, which should be on your computer. Both are excellent code editors, it doesn't matter a whole lot which one you choose. With Atom, you can run the program by double-clicking on the file called index.html, and with P5, you can just click on the run icon.
+You should rename your folder so you know it's yours. Now double click on your folder, and then open the file called **balls.js** in either Atom or the application P5, which should be on your computer. Both are excellent code editors, it doesn't matter a whole lot which one you choose. With Atom, you can run the program by double-clicking on the file called index.html, and with P5, you can just click on the run icon. 
 
 Now, to analyze your Gravity Simulator!

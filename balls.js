@@ -36,4 +36,4 @@ function showBalls() {
   addBall('bob');
 
   // Go ahead add a bunch! This way, you can compare how balls bounce with different gravity and height, etc.
-}
+} 

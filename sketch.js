@@ -5,7 +5,7 @@ var dropButton, pauseButton, resetButton,
   spacesSlider, spaceLab,
   addBallBtn, delBallBtn,
   inputLab, inputName;
-  
+
 var htmlgrav, htmlhieght, htmlelasticity, htmlname, htmlradius, htmlcolor;
 
 var ballObjs = [];
@@ -19,11 +19,11 @@ var ballName = 'Ball'
 var tickspace = 10;
 
 /*********************************************************/
-// The gravity variable reflects with gravity of planet - change 
+// The gravity variable reflects with gravity of planet - change
 // it to the gravity of the moon, and it will reflect accurately
-//                          
+//
 // Note: It is in units of meters - but can you change it to
-// feet (gravity accelerates at 32/f/s/s on Earth)? Hint: create 
+// feet (gravity accelerates at 32/f/s/s on Earth)? Hint: create
 // a new variable - this is a ratio problem
 /*********************************************************/
 
@@ -94,17 +94,17 @@ function setup() {
 
   tickLab = createElement('label', 'Space Between Meters: ').parent('sliderLoc');
   tickSlider = createSlider(.25, 60, tickspace, .25).parent('sliderLoc');
-  
+
   spaceLab = createElement('label', 'Scale').parent('sliderLoc');
   spaceSlider = createSlider(1, 250, 1, 1).parent('sliderLoc');
-  
+
   showBalls();
-  
+
   htmlname = createElement('p', 'Name: ' + ballObjs[0].name).id('htmlname').parent('ballSettings');
   htmlgrav = createElement('p', 'Gravity: ' + ballObjs[0].gravity + ' m/s/s').id('htmlgrav').parent('ballSettings');
   htmlhieght = createElement('p', 'Height: ' + ballObjs[0].meters + ' meters').id('htmlhieght').parent('ballSettings');
   htmlelasticity = createElement('p', 'Elasticity: ' + ballObjs[0].elasticity).id('htmlelasticity').parent('ballSettings');
-  htmlradius = createElement('p', 'Radius: ' + ballObjs[0].radius).id('htmlradius').parent('ballSettings'); 
+  htmlradius = createElement('p', 'Radius: ' + ballObjs[0].radius).id('htmlradius').parent('ballSettings');
   htmlcolor = createElement('p', 'Color: ' + ballObjs[0].fillColor).id('htmlcolor').parent('ballSettings');
 
   /*addBallBtn = createButton('').class('btn btn-primary btn-sm').style('width', 'inherit').style('float', 'right').parent('setBtnLoc');
@@ -114,7 +114,7 @@ function setup() {
   createElement('div').id('goright').style('float','left').style('margin-bottom','10px').parent('ballSettings');
   inputLab = createElement('label', 'Name of Ball:').style('width','inherit').style('margin-right','10px').parent('goright');
   inputName = createElement('span', ballName).id('name').style('width','inherit').attribute('contenteditable', 'true').parent('goright');*/
-  
+
   //settingsSetup();
 
   /*delBallBtn = createButton('').class('btn btn-primary btn-sm').parent('ballSettings');
@@ -130,7 +130,7 @@ function draw() {
 
   tickLab.elt.textContent = 'Size';
   tickspace = 60.25-tickSlider.value();
-  
+
   spaceLab.elt.innerHTML = 'Scale: ' + tickrise + ' m';
   tickrise = spaceSlider.value();
 
@@ -142,11 +142,11 @@ function draw() {
   noStroke();
   //fill(255);
   for (var i = 0; i < ballObjs.length; i++) {
-    
+
     textAlign(CENTER);
     fill(240);
     text(ballObjs[i].name, ballObjs[i].xpos, ballObjs[i].ypos-ballObjs[i].radius-10);
-    
+
     strokeWeight(ballObjs[i].highlight);
     stroke(255);
     fill(ballObjs[i].fillColor);
@@ -163,18 +163,18 @@ function draw() {
       }
       ballObjs[i].marg = canvHeight - tickspace * ballObjs[i].meters;
       ballObjs[i].ypos = ballObjs[i].marg;
-      
+
       // hover
       if (mouseX > ballObjs[i].xpos - 12 && mouseX < ballObjs[i].xpos + 12 && mouseY > ballObjs[i].ypos - 12 && mouseY < ballObjs[i].ypos + 12) {
         ballObjs[i].highlight = 2;
         // clicking ball
         if (mouseIsPressed) {
-          
+
           //document.getElementById('name').textContent = ballObjs[i].name;
           //settingsSetValue(i);
-          
+
           //htmlgrav.elt.innerHTML = ballObjs[i].gravity;
-          
+
           document.getElementById('htmlname').textContent = 'Name: ' + ballObjs[i].name;
           document.getElementById('htmlgrav').textContent = 'Gravity: ' + ballObjs[i].gravity + ' m/s/s';
           document.getElementById('htmlhieght').textContent = 'Height: ' + ballObjs[i].meters + ' meters';
@@ -196,7 +196,7 @@ function draw() {
         //ballObjs[index].name = inputName.elt.innerHTML;
         ballObjs[index].marg = canvHeight - tickspace * ballObjs[index].meters;
         ballObjs[index].ypos = ballObjs[index].marg;
-        
+
         //settingsEdit();
 
         ballObjs[index].highlight = 2;
@@ -225,7 +225,7 @@ function draw() {
 
       // value where ball comes back
       bounce = ballObjs[i].marg + ((canvHeight - ballObjs[i].marg)) - ((canvHeight - ballObjs[i].marg) * ballObjs[i].elasticity);
-      
+
       // touches bottom
       if (ballObjs[i].ypos > canvHeight - ballObjs[i].radius) {
         ballObjs[i].dir *= -1;
@@ -235,8 +235,8 @@ function draw() {
       }
 
       if (ballObjs[i].fstate == 1) {
-        
-        // bouncing 
+
+        // bouncing
         if (ballObjs[i].ypos < bounce) {
           ballObjs[i].dir *= -1;
           ballObjs[i].bstate = 0;
@@ -260,7 +260,7 @@ function draw() {
     }
 
   }
-  
+
   //add();
   axis();
   speedometer();
@@ -295,7 +295,7 @@ function addBall(ballName, ballGravity, ballHeight, ballElasticity, ballRadius, 
   for (var i = 1; i < ballObjs.length; i++) {
     ballObjs[i].xpos += 30;
   }
-}
+} 
 
 function dropClick() {
   state = 1;
@@ -340,7 +340,7 @@ function deleteBall() {
 
 function speedometer() {
   if (index < ballObjs.length) {
-   selectedBallSpeed = pow((ballObjs[index].meters * ballObjs[index].gravity), ballObjs[index].time) 
+   selectedBallSpeed = pow((ballObjs[index].meters * ballObjs[index].gravity), ballObjs[index].time)
   }
   ellipseMode(CENTER);
   strokeWeight(2);
