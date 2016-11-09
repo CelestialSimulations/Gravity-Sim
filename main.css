@@ -95,6 +95,9 @@ h4 {
   padding: 5px;
 }
 
+#ballSettings p {
+  color: white;
+}
 canvas {
   vertical-align: top;
   /*border: ridge 10px gray;*/

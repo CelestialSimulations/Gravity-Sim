@@ -1,89 +1,88 @@
 # The Gravity Simulator
 
 Welcome to the Gravity Simulator! This program stimulates gravity by dropping a ball at
-the rate of gravity! You are able to add multiple balls, delete them, change the size and scale of the axis, pause and reset the simulation, and change the name and height of a ball.
+the rate of gravity! But... the value of gravity is up to you! It could be 10 m/s/s, or
+it could be 200 m/s/s! You will be able to change other things as well, such as the
+starting height of the ball, the elasticticy, radius, and even the name! To this, you
+will be able to add balls with their settings by calling a **function**.
 
 ![preview](preview.png "Gravity Simulator")
 
+A function is basically a block of code that you've written that can be used over and
+over. It can also be similar to a formula in that you are able to input values into it.
+For example, a function with a single parameter could look like this:
+
+```
+function addOne(input) {
+  input = input + 1
+}
+```
+
+In this function, I am adding 1 to whatever gets passed in as the input. I know
+`input = input + 1` seems, well, incorrect, but in programming, it is you who decides
+what equals what. So if you say something is going to equal something plus one, then it
+will!
+
+Then it can be called like this:
+
+```
+addOne(3)
+```
+
+`addOne(3)` would be equal to 4, because I am adding 1 to the input, which is 3. I can
+use this function as many times as I would like to, in fact. Like this!
+
+```
+addOne(10) (equals 11)
+addOne(13) (equals 14)
+addOne(100) (equals 101 dalmations)
+```
+
+Knowing how to call a function will be essential in succeeding in this simulation. If you
+need help, or something doesn't make any sense, feel free to ask for help.
+
+Now, in order to add a new ball, there is a function we have to call. It is called, `addBall`. I have already done the programming that adds the ball, but it is up to you
+to call it.
+
+You can start with this:
+
+```
+addBall()
+```
+
+This will add a ball with defualt settings to the simulation. However, you can change those
+settings by adding parameters, or inputs. There are a total of six parameters you can add, and I will explain them now.
+
+First, is the **name** input. You can decide what to call your ball. It should be in quotes when you pass it in. For example:
+
+```
+addBall('earth ball')
+```
+
+The next parameter you can add is gravity. It is in units of meters per second squared, so it's default is 10. To change that, pass in the name input, then the gravity input. Like this:
+
+```
+addBall('earth ball', 3)
+```
+
+This would give the ball a name of earth ball and a gravity of 3 m/s². You can also change the starting height of the ball, elasticity, radius, and color.
+
+Here is a table on how to use the order of the parameters to pass in the inputs. The last row is an example calling all six parameters.
+
+| parameters | Name | Gravity | Starting Height in Meters | Elasticity | Radius | Color |
+| ---------- | ---- | ------- | ------------------------- | ---------- | ------ | ----- |
+| default values | 'Ball' | 10 | 12 | .75 | 10 | 'blue' |
+| addBall | ( 'earth ball', | 3, | 10, | .7, | 15, | 'red' ) |
+
+Elasticity will need to be between .01 and .99 to avoid errors, but basically it is the percentage of how far the the ball bounces back up.
+
+Radius is the size of the ball in pixels, so you can choose any positive number you like, but, a warning, if you make to large, it might cover the entire simulation ;)
+
+Color has several options for what you can write as it's value, but, generally, the names of generic colors, such as 'yellow', 'green', 'orange', 'purple', will work just fine. The color names must be wrapped in quotes.
+
+Try adding balls with different gravity first, so you can analyze the differences of the gravity of different planets. For example, the gravity of the moon is 1.622 m/s². But feel free to go wild! There's tons you can do with these paramters.
+
 To explore it, we will first need to [get the the code](#getting-the-code).
-
-However, I think we might be missing something. Changing the height and name of the balls is fun and all, but we're not seeing any interesting comparision here. Let's change that. We need to add a **new setting**.
-
-In order to add a new setting, we'll need to decide which variable we want to make editable. The complete list of settings we can add are:
-* gravity
-* elasticity
-* radius
-* fillColor
-
-To access the values of the selected ball, you can use:
-
-* `ballObjs[index].gravity`
-* `ballObjs[index].elasticity`
-* `ballObjs[index].radius`
-* `ballObjs[index].fillColor`
-
-Adding a new setting will involve several steps, but I have carefully commented the code, so it should be fairly easy to follow if you read them.
-
-The steps are:
-  1. [Declaring the label and slider variables](#declaring)
-  2. [Drawing the elements](#drawing)
-  3. [Displaying the value](#displaying-the-value)
-  4. [Setting the value of the slider](#defining-the-slider-value)
-  5. [Setting the value of the ball](#defining-the-ball-value)
-
-## Declaring
-First, we need to declare two variables for the **label element** and the **slider element**. What is a variable, you may ask? A variable is a stored value with a name. In our program, define a variable like this:
-
-```
-var (name) = (some value);
-```
-
-name could be anything — but it's best to use mainly alphebtical letters to avoid syntax errors. some value could also be anything — it could be a number, a string (words in quotations), an array (a data-type variable), lot's of things. You also don't have to have one — you can just declare it first to initilize it. In our program, we're just going to have strings and numbers.
-
-Continuing on, let's declare our label and slider variables as:
-```
-var gravityLabel, gravitySlider;
-```
-
-## Drawing
-Now let's draw a slider and a label! This is actually quite simple to do, thanks to p5's built in functions `createElement()` and `createSlider()`.
-
-To do this, go to the function, `settingsSetup()`, and write the name of our label variable, which is `gravityLabel` in our case, and have it equal to `createElement('label').parent('ballSettings');`. It should look like this:
-
-```
-gravityLabel = createElement('label').parent('ballSettings');
-```
-
-Then we need to draw our slider element. Write the name the slider variable and have it equal to `createSlider(min value, max value, starting value, step).id(gravitySlider).parent('ballSettings');`. The createSlider() function will need some parameters in order to make it an effective slider. The first parameter needs to the minimum values you want the slider to be able to have, the second parameter needs to the max value you want the slider to have, the third parameter needs to be the value you want the slider to start at, and the fourth parameter needs to be incremental change of the slider. You do not have to include the fourth slider, it's default is 1. So you could define the slider variable like this:
-
-```
-gravitySlider = createSlider(0.5, 200, 10, 0.5).id('gravitySlider').parent('ballSettings');
-```
-
-## Displaying the Value
-It would help us greatly in analyzing the simulation if we were to know what the current values of the sliders were. To add this feature, first go to the function `settingsDrawLabelValue()`. We will need to select the HTML of the label element and have it equal to the value of the setting. It should look like this:
-
-```
-gravityLabel.elt.innerHTML = 'Gravity: ' + ballObjs[index].gravity + ' m/sec/sec';
-```
-
-Here, we wrote our label variable, and added .elt.innerHTML to it before we defined it. Why did we do this? So we could access the HTML of our label element, and change the text. We are defining this variable as a string, quotations need to be added around the letters.  `ballObjs[index].gravity` is the gravity of the ball. The strings 'Gravity: ' and ' m/sec/sec' serve as context.
-
-## Defining the Slider Value
-We will need the slider value to adjust to the value of ball. When a new ball is added, it takes the values that the sliders are currently at, but if we want to select a different ball, then the values of the sliders need to change to the ball's. First, we need to go to the `settingsSetValue()` function and add a single line that looks like this:
-
-```
-document.getElementById('gravitySlider').value = ballObjs[i].gravity;
-```
-
-In the function document.getElementById(), the slider variable will need to be our parameter. `document.getElementById('gravitySlider').value` is the value of the slider, and we are setting it equal to `ballObjs[i].gravity`, the value of the gravity of the ball.
-
-## Defining the Ball Value
-When the ball is selected, we want to be able to edit the ball's values. We are able to do this with the height in the simulation, and we are trying to achieve this with gravity now. So to do this, we need to go the function, `settingsEdit()`, and define the value of the ball to be equal to the value of the slider. The value of the gravity of the selected ball can be written as `ballObjs[index].gravity` and the value of the slider can be written as `gravitySlider.value()`. So the statement should look like this:
-
-```
-ballObjs[index].gravity = gravitySlider.value();
-```
 
 ## Getting the Code...
 To get the code from the online repository to your computer, you can either download it or clone it.
@@ -112,7 +111,7 @@ type in the following git command. You can just copy and paste the entire block 
 do the work for you. Believe in Git.
 
 ```
-git clone https://github.com/CelestialSimulations/Light-Speed-Sim.git
+git clone https://github.com/CelestialSimulations/Gravity-Sim.git
 ```
 It should appear in Documents folder quickly.
 

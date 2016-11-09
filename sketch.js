@@ -5,24 +5,10 @@ var dropButton, pauseButton, resetButton,
   spacesSlider, spaceLab,
   addBallBtn, delBallBtn,
   inputLab, inputName;
+  
+var htmlgrav, htmlhieght, htmlelasticity, htmlname, htmlradius, htmlcolor;
 
-var ballObjs = [{
-  xpos: 70,
-  ypos: canvHeight - tickspace * 12,
-  meters: 12,
-  radius: 10,
-  name: 'Ball',
-  fillColor: 240,
-  dir: 1,
-  elasticity: .75,
-  time: 0,
-  speed: 0,
-  gravity: 10,
-  last: 0,
-  bstate: 0,
-  fstate: 0,
-  marg: 0
-}];
+var ballObjs = [];
 
 var turnstate = 0;
 var index = 0;
@@ -111,20 +97,29 @@ function setup() {
   
   spaceLab = createElement('label', 'Scale').parent('sliderLoc');
   spaceSlider = createSlider(1, 250, 1, 1).parent('sliderLoc');
+  
+  showBalls();
+  
+  htmlname = createElement('p', 'Name: ' + ballObjs[0].name).id('htmlname').parent('ballSettings');
+  htmlgrav = createElement('p', 'Gravity: ' + ballObjs[0].gravity + ' m/s/s').id('htmlgrav').parent('ballSettings');
+  htmlhieght = createElement('p', 'Height: ' + ballObjs[0].meters + ' meters').id('htmlhieght').parent('ballSettings');
+  htmlelasticity = createElement('p', 'Elasticity: ' + ballObjs[0].elasticity).id('htmlelasticity').parent('ballSettings');
+  htmlradius = createElement('p', 'Radius: ' + ballObjs[0].radius).id('htmlradius').parent('ballSettings'); 
+  htmlcolor = createElement('p', 'Color: ' + ballObjs[0].fillColor).id('htmlcolor').parent('ballSettings');
 
-  addBallBtn = createButton('').class('btn btn-primary btn-sm').style('width', 'inherit').style('float', 'right').parent('setBtnLoc');
+  /*addBallBtn = createButton('').class('btn btn-primary btn-sm').style('width', 'inherit').style('float', 'right').parent('setBtnLoc');
   createElement('span', '').class('glyphicon glyphicon-plus').attribute("arial-hidden", "true").parent(addBallBtn);
   addBallBtn.mousePressed(add);
 
   createElement('div').id('goright').style('float','left').style('margin-bottom','10px').parent('ballSettings');
   inputLab = createElement('label', 'Name of Ball:').style('width','inherit').style('margin-right','10px').parent('goright');
-  inputName = createElement('span', ballName).id('name').style('width','inherit').attribute('contenteditable', 'true').parent('goright');
+  inputName = createElement('span', ballName).id('name').style('width','inherit').attribute('contenteditable', 'true').parent('goright');*/
   
-  settingsSetup();
+  //settingsSetup();
 
-  delBallBtn = createButton('').class('btn btn-primary btn-sm').parent('ballSettings');
+  /*delBallBtn = createButton('').class('btn btn-primary btn-sm').parent('ballSettings');
   createElement('span', '').class('glyphicon glyphicon-trash').attribute("arial-hidden", "true").parent(delBallBtn);
-  delBallBtn.mousePressed(deleteBall);
+  delBallBtn.mousePressed(deleteBall);*/
 
 }
 
@@ -139,21 +134,25 @@ function draw() {
   spaceLab.elt.innerHTML = 'Scale: ' + tickrise + ' m';
   tickrise = spaceSlider.value();
 
-  if (index < ballObjs.length) {
+  /*if (index < ballObjs.length) {
     settingsDrawLabelValue();
-  }
+  }*/
 
   //ball objects
   noStroke();
-  fill(255);
+  //fill(255);
   for (var i = 0; i < ballObjs.length; i++) {
-
-    fill(50, 50, ballObjs[i].fillColor);
-    ellipse(ballObjs[i].xpos, ballObjs[i].ypos, ballObjs[i].radius * 2, ballObjs[i].radius * 2);
     
     textAlign(CENTER);
     fill(240);
     text(ballObjs[i].name, ballObjs[i].xpos, ballObjs[i].ypos-ballObjs[i].radius-10);
+    
+    strokeWeight(ballObjs[i].highlight);
+    stroke(255);
+    fill(ballObjs[i].fillColor);
+    ellipse(ballObjs[i].xpos, ballObjs[i].ypos, ballObjs[i].radius * 2, ballObjs[i].radius * 2);
+    noStroke();
+    strokeWeight(1);
 
     if (state === 0) {
 
@@ -164,14 +163,24 @@ function draw() {
       }
       ballObjs[i].marg = canvHeight - tickspace * ballObjs[i].meters;
       ballObjs[i].ypos = ballObjs[i].marg;
-
-      //clicking ball
+      
+      // hover
       if (mouseX > ballObjs[i].xpos - 12 && mouseX < ballObjs[i].xpos + 12 && mouseY > ballObjs[i].ypos - 12 && mouseY < ballObjs[i].ypos + 12) {
-        ballObjs[i].fillColor = 100;
+        ballObjs[i].highlight = 2;
+        // clicking ball
         if (mouseIsPressed) {
           
-          document.getElementById('name').textContent = ballObjs[i].name;
-          settingsSetValue(i);
+          //document.getElementById('name').textContent = ballObjs[i].name;
+          //settingsSetValue(i);
+          
+          //htmlgrav.elt.innerHTML = ballObjs[i].gravity;
+          
+          document.getElementById('htmlname').textContent = 'Name: ' + ballObjs[i].name;
+          document.getElementById('htmlgrav').textContent = 'Gravity: ' + ballObjs[i].gravity + ' m/s/s';
+          document.getElementById('htmlhieght').textContent = 'Height: ' + ballObjs[i].meters + ' meters';
+          document.getElementById('htmlelasticity').textContent = 'Elasticity: ' + ballObjs[i].elasticity;
+          document.getElementById('htmlradius').textContent = 'Radius: ' + ballObjs[i].radius;
+          document.getElementById('htmlcolor').textContent = 'Color: ' + ballObjs[i].fillColor;
 
           index = ballObjs.map(function(d) {
             return d.xpos
@@ -180,17 +189,17 @@ function draw() {
           turnstate = 1;
         }
       } else {
-        ballObjs[i].fillColor = 240;
+        ballObjs[i].highlight = 0;
       }
 
       if (turnstate == 1) {
-        ballObjs[index].name = inputName.elt.innerHTML;
+        //ballObjs[index].name = inputName.elt.innerHTML;
         ballObjs[index].marg = canvHeight - tickspace * ballObjs[index].meters;
         ballObjs[index].ypos = ballObjs[index].marg;
         
-        settingsEdit();
+        //settingsEdit();
 
-        ballObjs[index].fillColor = 150;
+        ballObjs[index].highlight = 2;
       }
     }
 
@@ -251,25 +260,33 @@ function draw() {
     }
 
   }
-
+  
+  //add();
   axis();
   speedometer();
 
 }
 
-function add() {
-  ballObjs.unshift({
+function addBall(ballName, ballGravity, ballHeight, ballElasticity, ballRadius, ballColor) {
+  ballGravity = ballGravity || 10;
+  ballHeight = ballHeight || 12;
+  ballElasticity = ballElasticity || .75;
+  ballName = ballName || "Ball";
+  ballRadius = ballRadius || 10;
+  ballColor = ballColor || 'blue';
+  ballObjs.push({
     xpos: 70,
     ypos: 0,
-    fillColor: 240,
-    elasticity: .75,
-    meters: heightSlider.value(),
-    radius: 10,
-    name: inputName.elt.innerHTML,
+    gravity: ballGravity,
+    fillColor: ballColor,
+    elasticity: ballElasticity,
+    meters: ballHeight,
+    radius: ballRadius,
+    name: ballName,
+    highlight: 0,
     dir: 1,
     time: 0,
     speed: 0,
-    gravity: 10,
     last: 0,
     bstate: 0,
     fstate: 0,
