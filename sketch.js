@@ -104,7 +104,7 @@ function setup() {
   htmlgrav = createElement('p', 'Gravity: ' + ballObjs[0].gravity + ' m/s/s').id('htmlgrav').parent('ballSettings');
   htmlhieght = createElement('p', 'Height: ' + ballObjs[0].meters + ' meters').id('htmlhieght').parent('ballSettings');
   htmlelasticity = createElement('p', 'Elasticity: ' + ballObjs[0].elasticity).id('htmlelasticity').parent('ballSettings');
-  htmlradius = createElement('p', 'Radius: ' + ballObjs[0].radius).id('htmlradius').parent('ballSettings');
+  htmlradius = createElement('p', 'Diameter: ' + ballObjs[0].multiplier+" meters").id('htmlradius').parent('ballSettings');
   htmlcolor = createElement('p', 'Color: ' + ballObjs[0].fillColor).id('htmlcolor').parent('ballSettings');
 
   /*addBallBtn = createButton('').class('btn btn-primary btn-sm').style('width', 'inherit').style('float', 'right').parent('setBtnLoc');
@@ -145,19 +145,19 @@ function draw() {
 
     textAlign(CENTER);
     fill(240);
-    text(ballObjs[i].name, ballObjs[i].xpos, ballObjs[i].ypos-ballObjs[i].radius-10);
+    text(ballObjs[i].name, ballObjs[i].xpos, ballObjs[i].ypos-ballObjs[i].radius*ballObjs[i].multiplier-10);
 
     strokeWeight(ballObjs[i].highlight);
     stroke(255);
     fill(ballObjs[i].fillColor);
-    ellipse(ballObjs[i].xpos, ballObjs[i].ypos, ballObjs[i].radius * 2, ballObjs[i].radius * 2);
+    ellipse(ballObjs[i].xpos, ballObjs[i].ypos, ballObjs[i].radius*ballObjs[i].multiplier*2, ballObjs[i].radius*ballObjs[i].multiplier*2);
     noStroke();
     strokeWeight(1);
 
     if (state === 0) {
 
       i != index;
-      ballObjs[i].radius = tickspace / 4;
+      ballObjs[i].radius = (tickspace/2);
       if(ballObjs[i].radius <= 2) {
         ballObjs[i].radius = 2;
       }
@@ -179,7 +179,7 @@ function draw() {
           document.getElementById('htmlgrav').textContent = 'Gravity: ' + ballObjs[i].gravity + ' m/s/s';
           document.getElementById('htmlhieght').textContent = 'Height: ' + ballObjs[i].meters + ' meters';
           document.getElementById('htmlelasticity').textContent = 'Elasticity: ' + ballObjs[i].elasticity;
-          document.getElementById('htmlradius').textContent = 'Radius: ' + ballObjs[i].radius;
+          document.getElementById('htmlradius').textContent = 'Diameter: ' + ballObjs[i].multiplier + " meters";
           document.getElementById('htmlcolor').textContent = 'Color: ' + ballObjs[i].fillColor;
 
           index = ballObjs.map(function(d) {
@@ -227,7 +227,7 @@ function draw() {
       bounce = ballObjs[i].marg + ((canvHeight - ballObjs[i].marg)) - ((canvHeight - ballObjs[i].marg) * ballObjs[i].elasticity);
 
       // touches bottom
-      if (ballObjs[i].ypos > canvHeight - ballObjs[i].radius) {
+      if (ballObjs[i].ypos > canvHeight - ballObjs[i].radius*ballObjs[i].multiplier) {
         ballObjs[i].dir *= -1;
         ballObjs[i].fstate = 1;
         ballObjs[i].elasticity = ballObjs[i].elasticity * ballObjs[i].elasticity;
@@ -244,7 +244,7 @@ function draw() {
 
         // ending it
         if (ballObjs[i].elasticity < .0005) {
-          ballObjs[i].ypos = canvHeight - ballObjs[i].radius;
+          ballObjs[i].ypos = canvHeight - ballObjs[i].radius*ballObjs[i].multiplier;
           ballObjs[i].bstate = 2;
         }
 
@@ -267,13 +267,14 @@ function draw() {
 
 }
 
-function addBall(ballName, ballGravity, ballHeight, ballElasticity, ballRadius, ballColor) {
+function addBall(ballName, ballGravity, ballHeight, ballElasticity, ballMultiplier, ballColor) {
   ballGravity = ballGravity || 10;
   ballHeight = ballHeight || 12;
   ballElasticity = ballElasticity || .75;
   ballName = ballName || "Ball";
-  ballRadius = ballRadius || 10;
+  //ballRadius = ballRadius || 10;
   ballColor = ballColor || 'blue';
+  ballMultiplier = ballMultiplier || .5;
   ballObjs.push({
     xpos: 70,
     ypos: 0,
@@ -281,7 +282,8 @@ function addBall(ballName, ballGravity, ballHeight, ballElasticity, ballRadius, 
     fillColor: ballColor,
     elasticity: ballElasticity,
     meters: ballHeight,
-    radius: ballRadius,
+    radius: 1,
+    multiplier: ballMultiplier,
     name: ballName,
     highlight: 0,
     dir: 1,

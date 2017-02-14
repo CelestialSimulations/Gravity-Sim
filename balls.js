@@ -27,13 +27,15 @@ function showBalls() {
   // parameter 2 will always be gravity, parameter 3 will always be height, ect.
   //
   // This means that you can input values, in this order, in the parenthesises. For example:
-  //        name    gravity `meters  elasicity radius color
+  //        name    gravity  meters  elasicity diameter color
   //          ↓          ↓      ↓      ↓          ↓     ↓
-  addBall("superball",  15,    10,    .7 ,      15 ,  'blue')
+  addBall("superball",  15,    10,    .7 ,        1,  'red')
 
   // There are up to six parameters you can add, but it still works if you add less! Default values will
   // automatically be set.
   addBall('bob');
+  
+  addBall('earth',  100)
 
   // Go ahead add a bunch! This way, you can compare how balls bounce with different gravity and height, etc.
 } 
