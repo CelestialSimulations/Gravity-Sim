@@ -29,13 +29,14 @@ function showBalls() {
   // This means that you can input values, in this order, in the parenthesises. For example:
   //        name    gravity  meters  elasicity diameter color
   //          ↓          ↓      ↓      ↓          ↓     ↓
-  addBall("superball",  15,    10,    .7 ,        1,  'red')
+  addBall('earth',      10,    10,    .75,       1.4,  'red');
+  addBall('john', 10, 7, .6, 1, 'pink');
 
   // There are up to six parameters you can add, but it still works if you add less! Default values will
-  // automatically be set.
+  // automatically be set
+
+  
   addBall('bob');
   
-  addBall('earth',  100)
-
   // Go ahead add a bunch! This way, you can compare how balls bounce with different gravity and height, etc.
 } 

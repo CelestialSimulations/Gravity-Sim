@@ -154,13 +154,17 @@ function draw() {
     noStroke();
     strokeWeight(1);
 
-    if (state === 0) {
-
-      i != index;
-      ballObjs[i].radius = (tickspace/2);
+    ballObjs[i].radius = (tickspace/2);
       if(ballObjs[i].radius <= 2) {
         ballObjs[i].radius = 2;
       }
+
+    if (state === 0) {
+
+      i != index;
+      
+          //print(ballObjs[i].radius)
+
       ballObjs[i].marg = canvHeight - tickspace * ballObjs[i].meters;
       ballObjs[i].ypos = ballObjs[i].marg;
 
@@ -261,7 +265,6 @@ function draw() {
 
   }
 
-  //add();
   axis();
   speedometer();
 
@@ -272,7 +275,6 @@ function addBall(ballName, ballGravity, ballHeight, ballElasticity, ballMultipli
   ballHeight = ballHeight || 12;
   ballElasticity = ballElasticity || .75;
   ballName = ballName || "Ball";
-  //ballRadius = ballRadius || 10;
   ballColor = ballColor || 'blue';
   ballMultiplier = ballMultiplier || .5;
   ballObjs.push({
@@ -295,7 +297,12 @@ function addBall(ballName, ballGravity, ballHeight, ballElasticity, ballMultipli
     marg: 0,
   });
   for (var i = 1; i < ballObjs.length; i++) {
-    ballObjs[i].xpos += 30;
+    //ballObjs[i].radius = tickspace/2;
+    var n = i - 1;
+    n != -1;
+    ballObjs[i].xpos = ballObjs[i].xpos+((60.25-tickSlider.value()))+30;//*(tickspace/2);//((tickspace/2)*ballMultiplier*10);
+    //print(ballObjs[i+1]);
+    //print(ballObjs[i].radius*ballObjs[i].multiplier*2*10);
   }
 } 
 
